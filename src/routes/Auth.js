@@ -3,6 +3,9 @@ import {
 	getAuth,
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
+	GoogleAuthProvider,
+	GithubAuthProvider,
+	signInWithPopup,
 } from 'firebase/auth';
 
 const Auth = () => {
@@ -10,6 +13,7 @@ const Auth = () => {
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 	const [newAccount, setNewAccount] = useState(true);
+	const auth = getAuth();
 
 	const onChangeHandler = (event) => {
 		const inputName = event.target.name;
@@ -24,7 +28,6 @@ const Auth = () => {
 
 	const onSubmit = (event) => {
 		event.preventDefault();
-		const auth = getAuth();
 		if (newAccount) {
 			createUserWithEmailAndPassword(auth, email, password)
 				.then((userCredential) => {
@@ -58,6 +61,39 @@ const Auth = () => {
 		setNewAccount((prev) => !prev);
 	};
 
+	const onSocialClick = (event) => {
+		const {
+			target: { name },
+		} = event;
+		let provider;
+		if (name === 'google') {
+			provider = new GoogleAuthProvider();
+		} else if (name === 'github') {
+			provider = new GithubAuthProvider();
+		}
+
+		signInWithPopup(auth, provider)
+			.then((result) => {
+				// This gives you a Google Access Token. You can use it to access the Google API.
+				const credential = GoogleAuthProvider.credentialFromResult(result);
+				const token = credential.accessToken;
+				// The signed-in user info.
+				const user = result.user;
+				console.log(user);
+				// ...
+			})
+			.catch((error) => {
+				// Handle Errors here.
+				const errorCode = error.code;
+				const errorMessage = error.message;
+				// The email of the user's account used.
+				const email = error.email;
+				// The AuthCredential type that was used.
+				const credential = GoogleAuthProvider.credentialFromError(error);
+				// ...
+			});
+	};
+
 	return (
 		<div>
 			<form onSubmit={onSubmit}>
@@ -85,8 +121,12 @@ const Auth = () => {
 			<div onClick={toggleAccount}>
 				{newAccount ? 'Sign In' : 'Create Account'}
 			</div>
-			<button>Continue With Google</button>
-			<button>Continue With GitHub</button>
+			<button onClick={onSocialClick} name="google">
+				Continue With Google
+			</button>
+			<button onClick={onSocialClick} name="github">
+				Continue With GitHub
+			</button>
 		</div>
 	);
 };
