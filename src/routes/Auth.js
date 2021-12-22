@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Auth = () => {
 	const [email, setEmail] = useState('');
@@ -17,6 +18,20 @@ const Auth = () => {
 
 	const onSubmit = (event) => {
 		event.preventDefault();
+		const auth = getAuth();
+		createUserWithEmailAndPassword(auth, email, password)
+			.then((userCredential) => {
+				// Signed in
+				const user = userCredential.user;
+				console.log(user);
+				// ...
+			})
+			.catch((error) => {
+				const errorCode = error.code;
+				const errorMessage = error.message;
+				console.log(error);
+				// ..
+			});
 	};
 
 	return (
@@ -24,7 +39,7 @@ const Auth = () => {
 			<form onSubmit={onSubmit}>
 				<input
 					name="email"
-					type="text"
+					type="email"
 					placeholder="Email"
 					required
 					value={email}
