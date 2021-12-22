@@ -1,23 +1,42 @@
-import { useState } from 'react';
-import { collection, addDoc } from "firebase/firestore"; 
+import { useEffect, useState } from 'react';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '../fbase';
 
 const Home = () => {
 	const [rweet, setRweet] = useState('');
+	const [rweets, setRweets] = useState([]);
 
-	const onSubmitHandler = async(event) => {
+	const getRweets = async () => {
+		const querySnapshot = await getDocs(collection(db, 'rweets'));
+		querySnapshot.forEach((doc) => {
+			// console.log(`${doc.id} => ${doc.data()}`);
+			console.log(doc.data());
+			const rweetObject = {
+				...doc.data(),
+				id: doc.id,
+			};
+			setRweets((prev) => [rweetObject, ...prev]);
+		});
+	};
+
+	useEffect(() => {
+		getRweets();
+		console.log('in');
+	}, []);
+
+	const onSubmitHandler = async (event) => {
 		event.preventDefault();
 
 		try {
-			const docRef = await addDoc(collection(db, "rweets"), {
+			const docRef = await addDoc(collection(db, 'rweets'), {
 				rweet,
 				createAt: Date.now(),
 			});
-			console.log("Document written with ID: ", docRef.id);
+			console.log('Document written with ID: ', docRef.id);
 		} catch (e) {
-			console.error("Error adding document: ", e);
+			console.error('Error adding document: ', e);
 		}
-		setRweet('')
+		setRweet('');
 	};
 
 	const onChangeHandler = (event) => {
@@ -38,6 +57,9 @@ const Home = () => {
 				></input>
 				<button type="submit">Rweet</button>
 			</form>
+			{rweets.map((rweet) => (
+				<div key={rweet.id}>{<h4>{rweet.rweet}</h4>}</div>
+			))}
 		</div>
 	);
 };
