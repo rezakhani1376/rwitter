@@ -3,6 +3,8 @@ import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 import Home from '../routes/Home';
 import Auth from '../routes/Auth';
 import { getAuth } from 'firebase/auth';
+import Navigation from './Navigation';
+import Profile from '../routes/Profile';
 
 const Routes = (props) => {
 	const { isLoggedIn } = props;
@@ -22,11 +24,15 @@ const Routes = (props) => {
 
 	return (
 		<Router>
+			{isLoggedIn && <Navigation />}
 			<Switch>
 				{isLoggedIn ? (
 					<Fragment>
 						<Route exact path="/">
 							<Home />
+						</Route>
+						<Route exact path="/profile">
+							<Profile />
 						</Route>
 					</Fragment>
 				) : (
