@@ -1,10 +1,23 @@
 import { useState } from 'react';
+import { collection, addDoc } from "firebase/firestore"; 
+import { db } from '../fbase';
 
 const Home = () => {
 	const [rweet, setRweet] = useState('');
 
-	const onSubmitHandler = (event) => {
+	const onSubmitHandler = async(event) => {
 		event.preventDefault();
+
+		try {
+			const docRef = await addDoc(collection(db, "rweets"), {
+				rweet,
+				createAt: Date.now(),
+			});
+			console.log("Document written with ID: ", docRef.id);
+		} catch (e) {
+			console.error("Error adding document: ", e);
+		}
+		setRweet('')
 	};
 
 	const onChangeHandler = (event) => {

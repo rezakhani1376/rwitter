@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-
+import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
 	apiKey: 'AIzaSyBEWQMAxNx4_yTE1OpDufYoeutZG59PdPY',
 	authDomain: 'rwitter-37d3e.firebaseapp.com',
@@ -11,5 +11,7 @@ const firebaseConfig = {
 };
 
 const fbase = initializeApp(firebaseConfig);
+
+export const db = getFirestore();
 
 export default fbase;
