@@ -4,8 +4,8 @@ import Home from '../routes/Home';
 import Auth from '../routes/Auth';
 import { getAuth } from 'firebase/auth';
 
-const Routes = () => {
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
+const Routes = (props) => {
+	const { isLoggedIn } = props;
 
 	const auth = getAuth();
 	const user = auth.currentUser;
