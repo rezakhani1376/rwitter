@@ -1,27 +1,25 @@
 import { useEffect, useState } from 'react';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, onSnapshot } from 'firebase/firestore';
 import { db } from '../fbase';
 
-const Home = () => {
+const Home = (props) => {
+	const { userObj } = props;
+	console.log(userObj.uid);
+
 	const [rweet, setRweet] = useState('');
 	const [rweets, setRweets] = useState([]);
 
-	const getRweets = async () => {
-		const querySnapshot = await getDocs(collection(db, 'rweets'));
-		querySnapshot.forEach((doc) => {
-			// console.log(`${doc.id} => ${doc.data()}`);
-			console.log(doc.data());
-			const rweetObject = {
-				...doc.data(),
-				id: doc.id,
-			};
-			setRweets((prev) => [rweetObject, ...prev]);
-		});
-	};
-
 	useEffect(() => {
-		getRweets();
-		console.log('in');
+		const q = query(collection(db, 'rweets'));
+		onSnapshot(q, (querySnapshot) => {
+			let updatedRweets = [];
+			querySnapshot.forEach((doc) => {
+				console.log(doc.data());
+				const dbRweet = { id: doc.id, ...doc.data() };
+				updatedRweets.push(dbRweet);
+			});
+			setRweets(updatedRweets);
+		});
 	}, []);
 
 	const onSubmitHandler = async (event) => {
@@ -29,8 +27,9 @@ const Home = () => {
 
 		try {
 			const docRef = await addDoc(collection(db, 'rweets'), {
-				rweet,
+				text: rweet,
 				createAt: Date.now(),
+				creatorId: userObj.uid,
 			});
 			console.log('Document written with ID: ', docRef.id);
 		} catch (e) {
@@ -42,7 +41,7 @@ const Home = () => {
 	const onChangeHandler = (event) => {
 		const enteredInput = event.target.value;
 		setRweet(enteredInput);
-		console.log(rweet);
+		// console.log(rweet);
 	};
 
 	return (
@@ -58,7 +57,7 @@ const Home = () => {
 				<button type="submit">Rweet</button>
 			</form>
 			{rweets.map((rweet) => (
-				<div key={rweet.id}>{<h4>{rweet.rweet}</h4>}</div>
+				<div key={rweet.id}>{<h4>{rweet.text}</h4>}</div>
 			))}
 		</div>
 	);

@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 import Home from '../routes/Home';
 import Auth from '../routes/Auth';
@@ -7,8 +7,7 @@ import Navigation from './Navigation';
 import Profile from '../routes/Profile';
 
 const Routes = (props) => {
-	const { isLoggedIn } = props;
-
+	const { isLoggedIn, userObj } = props;
 	const auth = getAuth();
 	const user = auth.currentUser;
 
@@ -29,7 +28,7 @@ const Routes = (props) => {
 				{isLoggedIn ? (
 					<Fragment>
 						<Route exact path="/">
-							<Home />
+							<Home userObj={userObj} />
 						</Route>
 						<Route exact path="/profile">
 							<Profile />
