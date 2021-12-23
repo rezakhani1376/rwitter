@@ -3,6 +3,8 @@ import { collection, addDoc, query, onSnapshot } from 'firebase/firestore';
 import { db } from '../fbase';
 import Rweet from '../components/Rweet';
 
+import { getStorage, ref, uploadString } from 'firebase/storage';
+
 const Home = (props) => {
 	const { userObj } = props;
 	// console.log(userObj.uid);
@@ -27,16 +29,25 @@ const Home = (props) => {
 	const onSubmitHandler = async (event) => {
 		event.preventDefault();
 
-		try {
-			const docRef = await addDoc(collection(db, 'rweets'), {
-				text: rweet,
-				createAt: Date.now(),
-				creatorId: userObj.uid,
-			});
-			console.log('Document written with ID: ', docRef.id);
-		} catch (e) {
-			console.error('Error adding document: ', e);
-		}
+		const storage = getStorage();
+		const storageRef = ref(storage, `${userObj.uid}`);
+
+		const photoUrl = attachment;
+		uploadString(storageRef, photoUrl, 'data_url').then((snapshot) => {
+			console.log('Uploaded a data_url string!');
+			console.log(snapshot);
+		});
+
+		// try {
+		// 	const docRef = await addDoc(collection(db, 'rweets'), {
+		// 		text: rweet,
+		// 		createAt: Date.now(),
+		// 		creatorId: userObj.uid,
+		// 	});
+		// 	console.log('Document written with ID: ', docRef.id);
+		// } catch (e) {
+		// 	console.error('Error adding document: ', e);
+		// }
 		setRweet('');
 	};
 

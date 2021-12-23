@@ -1,5 +1,7 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from "firebase/firestore";
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+
 const firebaseConfig = {
 	apiKey: 'AIzaSyBEWQMAxNx4_yTE1OpDufYoeutZG59PdPY',
 	authDomain: 'rwitter-37d3e.firebaseapp.com',
@@ -10,8 +12,10 @@ const firebaseConfig = {
 	appId: '1:1072656244567:web:bf9caf6dfd8e59d80c2812',
 };
 
-const fbase = initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
+
+const storage = getStorage(firebaseApp);
 
 export const db = getFirestore();
 
-export default fbase;
+export default firebaseApp;
