@@ -40,10 +40,23 @@ const Rweet = ({ rweetObj: rweet, isOwner }) => {
 		console.log(enteredInput);
 		setInput(enteredInput);
 	};
+	// console.log(rweet.attachmentUrl);
 
 	return (
 		<div>
-			{<h4>{rweet.text}</h4>}
+			{
+				<div>
+					<h4>{rweet.text}</h4>
+					{rweet.attachmentUrl && (
+						<img
+							src={rweet.attachmentUrl}
+							alt="this is a image"
+							width="100px"
+							height="100px"
+						/>
+					)}
+				</div>
+			}
 			{isEditing && (
 				<div>
 					<form onSubmit={onSubmitHandler}>

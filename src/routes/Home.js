@@ -3,11 +3,16 @@ import { collection, addDoc, query, onSnapshot } from 'firebase/firestore';
 import { db } from '../fbase';
 import Rweet from '../components/Rweet';
 
-import { getStorage, ref, uploadString } from 'firebase/storage';
+import {
+	getStorage,
+	ref,
+	uploadString,
+	getDownloadURL,
+} from 'firebase/storage';
 
 const Home = (props) => {
 	const { userObj } = props;
-	// console.log(userObj.uid);
+	// console.log(userObj);
 
 	const [rweet, setRweet] = useState('');
 	const [rweets, setRweets] = useState([]);
@@ -22,6 +27,7 @@ const Home = (props) => {
 				const dbRweet = { id: doc.id, ...doc.data() };
 				updatedRweets.push(dbRweet);
 			});
+			console.log(updatedRweets);
 			setRweets(updatedRweets);
 		});
 	}, []);
@@ -29,26 +35,29 @@ const Home = (props) => {
 	const onSubmitHandler = async (event) => {
 		event.preventDefault();
 
-		const storage = getStorage();
-		const storageRef = ref(storage, `${userObj.uid}`);
+		let attachmentUrl = '';
+		if (attachment !== '') {
+			const storage = getStorage();
+			const storageRef = ref(storage, `${userObj.uid}`);
+			const response = await uploadString(storageRef, attachment, 'data_url');
 
-		const photoUrl = attachment;
-		uploadString(storageRef, photoUrl, 'data_url').then((snapshot) => {
-			console.log('Uploaded a data_url string!');
-			console.log(snapshot);
-		});
+			attachmentUrl = await getDownloadURL(ref(storage, `${userObj.uid}`));
+		}
+		const rweetObj = {
+			text: rweet,
+			createAt: Date.now(),
+			creatorId: userObj.uid,
+			attachmentUrl,
+		};
 
-		// try {
-		// 	const docRef = await addDoc(collection(db, 'rweets'), {
-		// 		text: rweet,
-		// 		createAt: Date.now(),
-		// 		creatorId: userObj.uid,
-		// 	});
-		// 	console.log('Document written with ID: ', docRef.id);
-		// } catch (e) {
-		// 	console.error('Error adding document: ', e);
-		// }
+		try {
+			const docRef = await addDoc(collection(db, 'rweets'), rweetObj);
+			console.log('Document written with ID: ', docRef.id);
+		} catch (e) {
+			console.error('Error adding document: ', e);
+		}
 		setRweet('');
+		setAttachment('');
 	};
 
 	const onChangeHandler = (event) => {
