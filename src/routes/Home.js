@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { collection, addDoc, query, onSnapshot } from 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
 import { db } from '../fbase';
 import Rweet from '../components/Rweet';
 
@@ -12,11 +13,11 @@ import {
 
 const Home = (props) => {
 	const { userObj } = props;
-	// console.log(userObj);
+	console.log(userObj);
 
 	const [rweet, setRweet] = useState('');
 	const [rweets, setRweets] = useState([]);
-	const [attachment, setAttachment] = useState(null);
+	const [attachment, setAttachment] = useState('');
 
 	useEffect(() => {
 		const q = query(collection(db, 'rweets'));
@@ -36,12 +37,14 @@ const Home = (props) => {
 		event.preventDefault();
 
 		let attachmentUrl = '';
+		const uniqId = uuidv4();
+		
 		if (attachment !== '') {
 			const storage = getStorage();
-			const storageRef = ref(storage, `${userObj.uid}`);
+			const storageRef = ref(storage, `${uniqId}`);
 			const response = await uploadString(storageRef, attachment, 'data_url');
 
-			attachmentUrl = await getDownloadURL(ref(storage, `${userObj.uid}`));
+			attachmentUrl = await getDownloadURL(ref(storage, `${uniqId}`));
 		}
 		const rweetObj = {
 			text: rweet,

@@ -1,7 +1,10 @@
 import { getAuth, signOut } from 'firebase/auth';
 import { useHistory } from 'react-router-dom';
+import { collection, query, where, getDocs  } from 'firebase/firestore';
+import { db } from '../fbase';
+import { useEffect } from 'react';
 
-const Profile = () => {
+const Profile = ({ userObj }) => {
 	const auth = getAuth();
 	const history = useHistory();
 	const onLogOutHandler = () => {
@@ -15,6 +18,21 @@ const Profile = () => {
 				// An error happened.
 			});
 	};
+
+	const getMyRweets = async () => {
+		const rweets = collection(db, 'rweets');
+		const q = query(rweets, where('creatorId', '==', `${userObj.uid}`));
+		// console.log(q);
+		const querySnapshot = await getDocs(q);
+		querySnapshot.forEach((doc) => {
+			// doc.data() is never undefined for query doc snapshots
+			console.log(doc.id, ' => ', doc.data());
+		});
+	};
+
+	useEffect(() => {
+		getMyRweets();
+	}, []);
 
 	return (
 		<div>
