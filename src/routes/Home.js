@@ -45,6 +45,16 @@ const Home = (props) => {
 		// console.log(rweet);
 	};
 
+	const onFileChangeHandler = (event) => {
+		const file = event.target.files[0];
+		const reader = new FileReader();
+		reader.onloadend = (finishedEvent) => {
+			console.log(finishedEvent);
+		};
+		reader.readAsDataURL(file);
+		// console.log(file);
+	};
+
 	return (
 		<div>
 			<form onSubmit={onSubmitHandler}>
@@ -54,6 +64,11 @@ const Home = (props) => {
 					onChange={onChangeHandler}
 					value={rweet}
 					maxLength={120}
+				></input>
+				<input
+					type="file"
+					accept="image/*"
+					onChange={onFileChangeHandler}
 				></input>
 				<button type="submit">Rweet</button>
 			</form>
