@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { collection, addDoc, query, onSnapshot } from 'firebase/firestore';
 import { db } from '../fbase';
+import Rweet from '../components/Rweet';
 
 const Home = (props) => {
 	const { userObj } = props;
-	console.log(userObj.uid);
+	// console.log(userObj.uid);
 
 	const [rweet, setRweet] = useState('');
 	const [rweets, setRweets] = useState([]);
@@ -57,7 +58,11 @@ const Home = (props) => {
 				<button type="submit">Rweet</button>
 			</form>
 			{rweets.map((rweet) => (
-				<div key={rweet.id}>{<h4>{rweet.text}</h4>}</div>
+				<Rweet
+					key={rweet.id}
+					rweetObj={rweet}
+					isOwner={userObj.uid === rweet.creatorId}
+				/>
 			))}
 		</div>
 	);
