@@ -7,7 +7,7 @@ import Navigation from './Navigation';
 import Profile from '../routes/Profile';
 
 const Routes = (props) => {
-	const { isLoggedIn, userObj } = props;
+	const { isLoggedIn, userObj, refreshUser } = props;
 	const auth = getAuth();
 	const user = auth.currentUser;
 
@@ -15,15 +15,15 @@ const Routes = (props) => {
 		// User is signed in, see docs for a list of available properties
 		// https://firebase.google.com/docs/reference/js/firebase.User
 		// ...
-		console.log('yesss');
+		// console.log('yesss');
 	} else {
 		// No user is signed in.
-		console.log('NOOOO');
+		// console.log('NOOOO');
 	}
 
 	return (
 		<Router>
-			{isLoggedIn && <Navigation />}
+			{isLoggedIn && <Navigation userObj={userObj} />}
 			<Switch>
 				{isLoggedIn ? (
 					<Fragment>
@@ -31,7 +31,7 @@ const Routes = (props) => {
 							<Home userObj={userObj} />
 						</Route>
 						<Route exact path="/profile">
-							<Profile userObj={userObj} />
+							<Profile userObj={userObj} refreshUser={refreshUser} />
 						</Route>
 					</Fragment>
 				) : (

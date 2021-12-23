@@ -13,7 +13,7 @@ import {
 
 const Home = (props) => {
 	const { userObj } = props;
-	console.log(userObj);
+	// console.log(userObj);
 
 	const [rweet, setRweet] = useState('');
 	const [rweets, setRweets] = useState([]);
@@ -24,11 +24,11 @@ const Home = (props) => {
 		onSnapshot(q, (querySnapshot) => {
 			let updatedRweets = [];
 			querySnapshot.forEach((doc) => {
-				console.log(doc.data());
+				// console.log(doc.data());
 				const dbRweet = { id: doc.id, ...doc.data() };
 				updatedRweets.push(dbRweet);
 			});
-			console.log(updatedRweets);
+			// console.log(updatedRweets);
 			setRweets(updatedRweets);
 		});
 	}, []);
@@ -38,7 +38,7 @@ const Home = (props) => {
 
 		let attachmentUrl = '';
 		const uniqId = uuidv4();
-		
+
 		if (attachment !== '') {
 			const storage = getStorage();
 			const storageRef = ref(storage, `${uniqId}`);
