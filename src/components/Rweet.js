@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { db } from '../fbase';
 import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { getStorage, ref, deleteObject } from 'firebase/storage';
 
 const Rweet = ({ rweetObj: rweet, isOwner }) => {
 	const [isEditing, setIsEditing] = useState(false);
@@ -11,6 +12,17 @@ const Rweet = ({ rweetObj: rweet, isOwner }) => {
 		if (ok) {
 			await deleteDoc(doc(db, 'rweets', `${rweet.id}`));
 		}
+		const storage = getStorage();
+		const desertRef = ref(storage, `${rweet.creatorId}`);
+
+		deleteObject(desertRef)
+			.then(() => {
+				// File deleted successfully
+				console.log('file deleted');
+			})
+			.catch((error) => {
+				// Uh-oh, an error occurred!
+			});
 	};
 
 	const updateHandler = async () => {
