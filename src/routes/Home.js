@@ -9,6 +9,7 @@ const Home = (props) => {
 
 	const [rweet, setRweet] = useState('');
 	const [rweets, setRweets] = useState([]);
+	const [attachment, setAttachment] = useState(null);
 
 	useEffect(() => {
 		const q = query(collection(db, 'rweets'));
@@ -50,10 +51,13 @@ const Home = (props) => {
 		const reader = new FileReader();
 		reader.onloadend = (finishedEvent) => {
 			console.log(finishedEvent);
+			setAttachment(finishedEvent.currentTarget.result);
 		};
 		reader.readAsDataURL(file);
 		// console.log(file);
 	};
+
+	const onClearAttachmentHandler = () => setAttachment(null);
 
 	return (
 		<div>
@@ -71,6 +75,12 @@ const Home = (props) => {
 					onChange={onFileChangeHandler}
 				></input>
 				<button type="submit">Rweet</button>
+				{attachment && (
+					<div>
+						<img src={attachment} width="50px" height="50px" />
+						<button onClick={onClearAttachmentHandler}>Clear</button>
+					</div>
+				)}
 			</form>
 			{rweets.map((rweet) => (
 				<Rweet
